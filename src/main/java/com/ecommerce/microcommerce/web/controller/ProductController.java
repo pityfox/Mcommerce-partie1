@@ -112,17 +112,7 @@ public class ProductController {
 
     @GetMapping(value = "test/produitsOrdered")
     public List<Product> trierProduitsParOrdreAlphabetique(){
-        List<Product> productList = productDao.findAll();
-        Collections.sort(productList, new Comparator<Product>() {
-            @Override
-            public int compare(Product product2, Product product1)
-            {
-
-                return  product2.getNom().compareTo(product1.getNom());
-            }
-        });
-
-        return productList;
+        return productDao.findAllByOrderByNom();
     }
 
 
