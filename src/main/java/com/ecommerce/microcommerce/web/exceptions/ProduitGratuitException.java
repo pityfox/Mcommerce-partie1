@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class PrixException extends RuntimeException {
+public class ProduitGratuitException extends RuntimeException {
 
-    public PrixException(String s) {
+    public ProduitGratuitException(String s) {
         super(s);
     }
 }
