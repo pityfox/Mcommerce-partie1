@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.PrixException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -16,7 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
+import java.util.*;
 
 
 @Api( description="API pour es opérations CRUD sur les produits.")
@@ -69,6 +70,9 @@ public class ProductController {
 
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
 
+        if(product.getPrix() == 0)
+            throw new PrixException("Le prix de vente est de 0");
+
         Product productAdded =  productDao.save(product);
 
         if (productAdded == null)
@@ -93,6 +97,32 @@ public class ProductController {
     public void updateProduit(@RequestBody Product product) {
 
         productDao.save(product);
+    }
+
+    @GetMapping(value = "/AdminProduits")
+    public Map<Product, Integer> calculerMargeProduit(){
+        List<Product> productList = productDao.findAll();
+        Map<Product, Integer> marges = new HashMap<>();
+        for(Product product : productList){
+            int marge = product.getPrix() - product.getPrixAchat();
+            marges.put(product, marge);
+        }
+        return marges;
+    }
+
+    @GetMapping(value = "test/produitsOrdered")
+    public List<Product> trierProduitsParOrdreAlphabetique(){
+        List<Product> productList = productDao.findAll();
+        Collections.sort(productList, new Comparator<Product>() {
+            @Override
+            public int compare(Product product2, Product product1)
+            {
+
+                return  product2.getNom().compareTo(product1.getNom());
+            }
+        });
+
+        return productList;
     }
 
 
